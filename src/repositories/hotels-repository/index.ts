@@ -5,10 +5,8 @@ async function findHotels(): Promise<Hotel[]> {
   return prisma.hotel.findMany();
 }
 
-async function findHotelRooms(hotelId: number): Promise<Hotel & {
-    Rooms: Room[];
-}> {
-  return prisma.hotel.findFirst({
+async function findHotelRooms(hotelId: number) {
+  return prisma.hotel.findFirst( {
     where: {
       id: hotelId
     },
@@ -21,6 +19,7 @@ async function findHotelRooms(hotelId: number): Promise<Hotel & {
 const ticketRepository = {
   findHotels,
   findHotelRooms
+
 };
 
 export default ticketRepository;

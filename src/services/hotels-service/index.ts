@@ -2,7 +2,6 @@ import { notFoundError, requestError } from "@/errors";
 import hotelsRepository from "@/repositories/hotels-repository";
 import enrollmentRepository from "@/repositories/enrollment-repository";
 import ticketRepository from "@/repositories/ticket-repository";
-import { TicketStatus } from "@prisma/client";
 
 async function listAllHotels(userId: number) {
   const checkEnrollment = await enrollmentRepository.findWithAddressByUserId(userId);
@@ -36,7 +35,7 @@ async function listAllHotels(userId: number) {
   return hotelsList;
 }
 
-async function findHotel(userId: number) {
+async function findHotel(userId: number, hotelId: number) {
   const checkEnrollment = await enrollmentRepository.findWithAddressByUserId(userId);
 
   if (!checkEnrollment) {
@@ -58,10 +57,20 @@ async function findHotel(userId: number) {
   if (checkTicketType.TicketType.isRemote === true || checkTicketType.TicketType.includesHotel === false) {
     throw requestError(401, "UNAUTHORIZED");
   }
-}
 
+  const hotelRooms = await hotelsRepository.findHotelRooms(hotelId);
+
+  if(!hotelRooms) {
+    throw notFoundError();
+  }
+  console.log(hotelRooms);
+
+  return hotelRooms;
+}
+ 
 const hotelsService = {
-  listAllHotels
+  listAllHotels,
+  findHotel
 };
 
 export default hotelsService;
